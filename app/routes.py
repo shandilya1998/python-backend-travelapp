@@ -18,7 +18,7 @@ def index():
 
 @app.route("/load/", methods = ['GET'])
 def load():
-    """ Route to return the posts """
+    """ Route to return the places """
 
     time.sleep(0.2)  # Used to simulate delay
 
@@ -27,6 +27,7 @@ def load():
         # The request in the front-end must send all the three parameters required here - 
         # page. city and filters
         # filters is a list of tags the user wants to see
+        filters = str.split(requests.args.get('filters')) # list of all the filters to be applied for search
         if counter == 0:
             print(f"Returning posts 0 to {quantity}")
             # Slice 0 -> quantity from the db
@@ -37,10 +38,16 @@ def load():
             res = make_response(jsonify({}), 200)
 
         else:
-            print(f"Returning posts {counter} to {counter + quantity}")
+            print("Returning posts {counter} to {counter + quantity}")
             # Slice counter -> quantity from the db
             res = make_response(jsonify('demo response'), 200)
 
     return res
 
-
+"""
+    References-
+    https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask
+    https://pythonise.com/series/learning-flask/flask-query-strings
+    https://scotch.io/bar-talk/processing-incoming-request-data-in-flask
+    For more advanced features - https://exploreflask.com/en/latest/views.html
+"""

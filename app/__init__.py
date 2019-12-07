@@ -32,3 +32,4 @@ session = Session(app)
 app.config['SESSION_SQLALCHEMY'] = db
 session.app.session_interface.db.create_all()
 from app import routes,models
+#db.create_all()

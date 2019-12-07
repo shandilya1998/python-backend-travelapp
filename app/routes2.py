@@ -15,7 +15,7 @@ from app.APICalls import APICalls
 Notes : -
 The app performs the following functions-
     # Receives requests from the front end, evoking necessary functions to obtain outputs
-     and sending the appriate response.
+     and sending the appriate response
 """
 
 @app.route('/xyz')

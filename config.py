@@ -1,12 +1,33 @@
 import os
 
-class Config():
-    #Test Secret Key
-    SECRET_KEY = 'changeme'
-    #Database config
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://shandilya:Princyy-12345@127.0.0.1:5432/db'
+
+
+class Config(object):
+    DEBUG = True
+    TESTING = False
+    CSRF_ENABLED = True
+    SECRET_KEY = 'this-really-needs-to-be-changed'
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'] # DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    # this configurea session for when users enter the app, login and deletes it when they logout
     SESSION_TYPE = 'sqlalchemy'
     SESSION_PERMANENT = True
+
+
+
+class ProductionConfig(Config):
+    DEBUG = False
+
+
+class StagingConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+
+
+class DevelopmentConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+
+
+class TestingConfig(Config):
+    TESTING = True
 
