@@ -1,7 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo 
+from werkzeug.datastructures import CombinedMultiDict
 from app.models import users
+
+from flask_uploads import UploadSet, IMAGES
+images = UploadSet('images', IMAGES)
+
+
 
 #This class implements the login form
 class LoginForm(FlaskForm):
@@ -34,5 +40,25 @@ class RegistrationForm(FlaskForm):
         user = users.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+
+class EditProfileForm(FlaskForm):
+    """
+        This form is sent when the 'SAVE' button on the edit profile sreen is pressed
+        Add Other attributes to change
+    """
+    fname = StringField('First Name', validators = [DataRequired()])
+    lname = StringFiels('Last Name', validators = [DataRequired()])
+    
+class UploadProfileImageForm(FlaskForm):
+    """
+        This form is used to upload user profile image 
+    """
+    upload = FileField('image', validators=[
+             FileRequired(),
+             FileAllowed(images, 'Images only!')
+            ])
+
+
 
 
