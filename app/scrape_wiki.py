@@ -61,6 +61,56 @@ class place_vec():
 	    series[key] = series[key]/total
         return series
 
+def logged_apply(g, func, *args, **kwargs):
+    """
+        g - dataframe
+        func - function to apply to the dataframe
+        *args, **kwargs are the arguments to func
+        The method applies the function to all the elements of the dataframe and shows progress
+    """
+    step_percentage = 100. / len(g)
+    import sys
+    sys.stdout.write('apply progress:   0%')
+    sys.stdout.flush()
+
+    def logging_decorator(func):
+        def wrapper(*args, **kwargs):
+            progress = wrapper.count * step_percentage
+            sys.stdout.write('\033[D \033[D' * 4 + format(progress, '3.0f') + '%')
+            sys.stdout.flush()
+            wrapper.count += 1
+                return func(*args, **kwargs)
+        wrapper.count = 0
+        return wrapper
+
+    logged_func = logging_decorator(func)
+    res = g.apply(logged_func, *args, **kwargs)
+    sys.stdout.write('\033[D \033[D' * 4 + format(100., '3.0f') + '%' + '\n')
+    sys.stdout.flush()
+    return res
+
+
+places_lst = 'places_list.csv'
+df_p = pd.read_csv(places_lst)
+m = np.array()
+#data_p = np.array([list(df_p.loc[:, col]) for col in df_p.columns])
+
+def create_m(place):
+    place_name, place_id = place
+    v = pd.Series(place_vec(place_name, place_id).create_freq_vec())).values
+    m = np.append(m, [list(v)])
+    
+
+
+
+
+logged_apply(df_p, create_m)
+
+t = place_vec('place', 'place_id').create_freq_vec() # t is a numpy matrix, change in the code above
+
+u, s, v = np.linalg.svd(t, full_matrices=True)
+# Choice of the dimensions can be trained as a hyperparameter with the network on top of it or the similarity metric computation above it.
+
 
 
 
