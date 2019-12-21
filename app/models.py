@@ -3,13 +3,13 @@ from app.APICalls import APICalls
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-#Every class here represents as table in the database
+#Every class here represents a table in the database
 
 @login.user_loader
 def load_user(idusers):
     return users.query.get(int(idusers))
 
-class places(db.Model):
+class place(db.Model):
     place_id = db.Column(db.String(100),
                          primary_key = True,
                          nullable = False,
@@ -43,7 +43,7 @@ class places(db.Model):
     itineraryItems = db.relationship('itineraryItems',
                                      backref = 'place')
     reviews = db.relationship('experienceReview',
-                              backref = 'place')
+                              backref = 'place')  
 
     def in_places(self,
                   place_id):
@@ -56,6 +56,25 @@ class places(db.Model):
             place = places(place_details) # correct this statement based on the response from places details API
             db.session.add(place)
             db.session.commit()
+
+    def serialize(self):
+            return {
+                    'name' : self.name,
+                    'latitude' : self.latitude,
+                    'longitude' : self.longitude,
+                    'city' : self.city, 
+                    'openingHours' : self.openingHours,
+                    'photo' : self.photo,
+                    'stayTime' : self.stayTime,
+                    'numUsersVisited' : self.numUSersVisited,
+                    'history' : self.history,
+                    'descriptionShort' : self.descriptionShort, 
+                    'address' : self.address,
+                    'phoneNum' : self.phoneNum,
+                    'website' : self.website,
+                    'tags' : self.tags,
+                    'itineraryItems' : self.itineraryItems,
+                    'reviews' : self.reviews}
 
     def __repr__(self):
         return '<Place {}>'.format(self.name)
