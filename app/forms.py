@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo 
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FileField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from flask_wtf.file import FileAllowed
 from werkzeug.datastructures import CombinedMultiDict
-from app.models import users
+from app.models import user
 
 from flask_uploads import UploadSet, IMAGES
 images = UploadSet('images', IMAGES)
@@ -48,14 +49,14 @@ class EditProfileForm(FlaskForm):
         Add Other attributes to change
     """
     fname = StringField('First Name', validators = [DataRequired()])
-    lname = StringFiels('Last Name', validators = [DataRequired()])
+    lname = StringField('Last Name', validators = [DataRequired()])
     
 class UploadProfileImageForm(FlaskForm):
     """
         This form is used to upload user profile image 
     """
     upload = FileField('image', validators=[
-             FileRequired(),
+             DataRequired(),
              FileAllowed(images, 'Images only!')
             ])
 

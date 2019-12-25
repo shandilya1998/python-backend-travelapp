@@ -1,6 +1,6 @@
 from app import app, db
 from flask_login import current_user, login_user, login_required, logout_user
-from app.models import users, place, itineraryItems
+from app.models import user, place, itineraryItem
 from flask import redirect, url_for, flash, jsonify, request, session, Flask
 from app.forms import LoginForm, RegistrationForm
 from werkzeug.datastructures import MultiDict
@@ -37,7 +37,7 @@ def load():
             #p = pd.Series(p)
             # Slice 0 -> quantity from the db
             #res = make_response(logged_apply(p, jsonify), 200)
-            res = make_response(jsonify(logged_apply(pd.Series(list(p)), serialize_ )), 200)
+            res = make_response(logged_apply(pd.Series(list(p)), serialize_ ).to_json(), 200)
         elif counter == places:
             print("No more posts")
             res = make_response(jsonify({}), 200)

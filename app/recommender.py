@@ -149,6 +149,32 @@ pkl = open(f, 'wb')
 pickle.load(R, pkl)
 pkl.close()
 
+"""
+    t - number of tags in the data
+    Since the significance of the latent space vectors is not known,
+    nothing can be claimed about what the elements of the matrix obtained
+    by the aforementioned matrix multiplications signify.
+    Training an autoencoder with an input matrix (t*t) obtained by the matrix multiplication
+        u*p^T
+    with
+        u - a given user vector (t*1))
+        p - all place vectors (t*1)
+    can provide a model of the user that can provide how a user with a given set of preferences will
+    interact with a place with another set of characteristics.
+    Such CNN trained for each user can provide a model for all the users that a memory based reasoner
+    like CBR can use to decide whether a place should be suggested to a user or not
+    The encoders of all the trained autoencoders for each user are available to the Case base reasoner.
+    All the entries of the user vector are between 0 and 1. Moreover the number of dimensions are the
+    same in all the place and user vectors. Thus if a user vector can be thought of as the ideal place
+    vector that the data of the concerned user points to.
+    We add a constraint to each of the user models that if the input vector is the same as the
+    user vector, then the hidden representation vector must be a  unit vector and all the elements
+    in the hidden representation must be between 0 and 1.
+    Refer to this paper for contrained autoencoders -
+    http://ci.louisville.edu/zurada/publications/2017-as-submitted-babajide-zurada-SMC-Mag.pdf
+
+"""
+
 import tensorflow
 import keras
 import pandas as pd
@@ -200,34 +226,28 @@ class CNN:
         self.model.compile(optimizer="adam", loss="mse")
         
         # Train model by providing training data
-        self.model.fit(self.train_data(), epochs=2)
+        self.model.fit(self.train_data(), epochs=2) # Change the number of epochs to 10
         
         # To save the model
         model_json = self.to_json()
         with open("model_tex.json", "w") as json_file:
             json_file.write(model_json)
 
-        ae.save_weights("model_tex.h5")
+        self.model.save_weights("model_tex.h5")
         print("Saved model")
 
     def train_data(self):
+        """
+            This function needs to be completed
+        """
         return "This function returns training data"
 
 
 
 
-"""
-    u - number of users
-    p - number of places
-    t - number of tags
 
-    Since the significance of the latent space vectors is not known, 
-    nothing can be claimed about what the elements of the matrix obtained
-    by the aforementioned matrix multiplications signify.
-    Training a neural network with an input matrix () obtained by the dot product
-    of  user vector and all place vectors can provide with the model of what 
-    a user's preferences are.
-"""
+
+
 
 
 
