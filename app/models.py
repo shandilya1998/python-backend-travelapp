@@ -6,8 +6,8 @@ from flask_login import UserMixin
 #Every class here represents a table in the database
 
 @login.user_loader
-def load_user(idusers):
-    return users.query.get(int(idusers))
+def load_user(iduser):
+    return users.query.get(int(iduser))
 
 class place(db.Model):
     idplace = db.Column(db.String(100),
@@ -46,13 +46,13 @@ class place(db.Model):
                               backref = 'place')  
 
     def in_places_served(self,
-                  place_id):
-        return db.session.query(places).filter_by(place_id = place_id).scalar() is not None
+                  idplace):
+        return db.session.query(place).filter_by(idplace = idplace).scalar() is not None
 
-    def add_to_db(self, place_id):
-        exists = self.in_places(place_id)
+    def add_to_db(self, idplace):
+        exists = self.in_places(idplace)
         if not exists:
-            place_details = APICalls.call_places_details_api(place_id)
+            place_details = APICalls.call_places_details_api(idplace)
             place = places(place_details) # correct this statement based on the response from places details API
             db.session.add(place)
             db.session.commit()
@@ -163,23 +163,23 @@ class itinerary(db.Model):
                             nullable = False,
                             autoincrement = True,
                             unique = True)
-    userID = db.Column(db.Integer,
+    iduser = db.Column(db.Integer,
                        db.ForeignKey('user.iduser'))
-    sessionID = db.Column(db.Integer,
+    idsession = db.Column(db.Integer,
                           db.ForeignKey('session.idsession'))
     items = db.relationship('itineraryItems',
                              backref = 'itinerary')
 
     def get_itinerary_id(self,
                          idsession,
-                         user_id):
-        itinerary_ = itinerary.query.filter_by(userID = user_id,
-                                               sessionID = idsession)
+                         iduser):
+        itinerary_ = itinerary.query.filter_by(iduser = iduser,
+                                               idsession = idsession)
         if itinerary_.scalar() is not None:
             return itinerary_.iditinerary
         else:
-            itinerary_ = itinerary(sessionID = idsession,
-                                   userID = user_id)
+            itinerary_ = itinerary(idsession = idsession,
+                                   iduser = iduser)
             db.session.add(itinerary_)
             db.session.commit()
             return itinerary_.iditinerary
@@ -196,20 +196,20 @@ class itineraryItem(db.Model):
                                 unique = True)
     iditinerary = db.Column(db.Integer,
                             db.ForeignKey('itinerary.iditinerary'))
-    placeID = db.Column(db.String(100),
+    idplace = db.Column(db.String(100),
                         db.ForeignKey('place.idplace'))
 
     def add_to_itinerary(self,
                          idplace,
                          idsession,
-                         user_id):
+                         iduser):
         # this function will be called to add a place to the itinerary according to place_id, session_id and user_id
         place.add_to_db(idplace)
         # get_itinerary_id() returns the iditinerary with idsession and iduser
         iditinerary = itinerary.get_itinerary_id(idsession, #needs implementation of session
                                                  iduser)
         itineraryItem = itineraryItems(iditinerary = iditinerary,
-                                       placeID = place_id)
+                                       idplace = idplace)
         db.session.add(itineraryItem)
         db.session.commit()
 
@@ -243,7 +243,7 @@ class experienceReview(db.Model):
     iduser = db.Column(db.Integer,
                        db.ForeignKey('user.iduser'))
     idplace = db.Column(db.String(100),
-                        db.ForeignKey('place.place_id'))
+                        db.ForeignKey('place.idplace'))
     idtrip = db.Column(db.Integer,
                        db.ForeignKey('trip.idtrips'))
     tripRating = db.Column(db.Integer,
@@ -260,7 +260,7 @@ class userProfileTag(db.Model):
                               primary_key = True,
                               nullable = False)
     iduser = db.Column(db.Integer,
-                       db.ForeignKey('user.idusers'))
+                       db.ForeignKey('user.iduser'))
     tag = db.Column(db.String(45),
                     nullable = False)
 
