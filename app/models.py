@@ -45,7 +45,7 @@ class place(db.Model):
     reviews = db.relationship('experienceReview',
                               backref = 'place')  
 
-    def in_places_served(self,
+    def in_places_served(self, 
                   idplace):
         return db.session.query(place).filter_by(idplace = idplace).scalar() is not None
 
@@ -105,7 +105,7 @@ class user(UserMixin, db.Model):
                             backref = 'user')
     reviews = db.relationship('experienceReview',
                               backref = 'reviewsUser')
-    userProfileTags = db.relationship('userProfileTags',
+    userProfileTag = db.relationship('userProfileTag',
                                   backref = 'user')
 
     def set_password(self,
@@ -132,7 +132,7 @@ class placeDescriptionTag(db.Model):
                                    nullable = False,
                                    autoincrement = True,
                                    unique = True)
-    place_id = db.Column(db.String(100),
+    idplace = db.Column(db.String(100),
                          db.ForeignKey('place.idplace'),
                          nullable = False)
     tag = db.Column(db.String(50),
@@ -148,7 +148,7 @@ class session(db.Model):
                    nullable = False,
                    unique = True,
                    autoincrement = True)
-    userID = db.Column(db.Integer,
+    iduser = db.Column(db.Integer,
                        db.ForeignKey('user.iduser'))
     itineratyList = db.relationship('itinerary',
                                     backref = 'session')
@@ -167,7 +167,7 @@ class itinerary(db.Model):
                        db.ForeignKey('user.iduser'))
     idsession = db.Column(db.Integer,
                           db.ForeignKey('session.idsession'))
-    items = db.relationship('itineraryItems',
+    items = db.relationship('itineraryItem',
                              backref = 'itinerary')
 
     def get_itinerary_id(self,
