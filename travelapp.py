@@ -1,7 +1,7 @@
 from __future__ import print_function
 from typing import List, Any
 from app import app, db
-from app.models import placeDescriptionTag, places, users, placeDescriptionTag, session, itinerary, itineraryItems, trips, experienceReview, userProfileTags
+from app.models import placeDescriptionTag, place, user, placeDescriptionTag, session, itinerary, itineraryItem, trip, experienceReview, userProfileTag, in_places_served
 from app.APICalls import APICalls
 from app.key import API_key
 from ortools.constraint_solver import routing_enums_pb2
@@ -32,7 +32,8 @@ class PopulatePlaces():
 #                if not ele or '*' in ele:
 #                    continue
 #                self.tag_lst.append(ele)
-        self.tag_lst = ['War Memorials', 'Milltary Bases, Ports', 'Famous Street Food ']
+        self.tag_lst = ['Park', 'Pub', 'Hiking', 'Trekking', 'Shopping'] 
+        #'Beach', 'Wildlife', 'Restaurants', 'Sports', 'Art']
         self.city = city
         self.APICalls = APICalls()
 
@@ -54,10 +55,10 @@ class PopulatePlaces():
         # and returns data with place_id as key to retrieve all data for each place
         data = self.APICalls.call_places_text_api(query = query)
         # place_id is the place ID used by google to uniquely identify each place in their database
-        for place_id in data:
-            tag_place = placeDescriptionTag(place_id = place_id,
+        for idplace in data:
+            tag_place = placeDescriptionTag(idplace = idplace,
                                             tag = tag)
-            exists = places().in_places(place_id)
+            exists = in_places_served(idplace)
             if exists:
                 db.session.add(tag_place)
                 db.session.commit()
@@ -68,17 +69,17 @@ class PopulatePlaces():
                 # call_places_details_api() queries for place details from places details API
                 time.sleep(random.randint(5,
                                           40))
-                place = places(place_id=place_id,
-                               name = data[place_id]['name'],
-                               city = self.city)
+                p = place(idplace = idplace,
+                          name = data[idplace]['name'],
+                          city = self.city)
                 # call_places_photos_api() queries place photos from places photos API
                 # replace the next two statement based on the response
                 # received from places details API and places photos API
                 db.session.add(tag_place)
-                db.session.add(place)
+                db.session.add(p)
                 db.session.commit()
                 print('Place added')
-                print(place.name)
+                #print(place.name)
 
     def create_query_places_text_api(self,
                                      city,
@@ -86,8 +87,8 @@ class PopulatePlaces():
         query = tag.strip(' ') + ' ' + 'in' + ' ' + city
         return query
 
-#ob = PopulatePlaces('New York')
-#ob.add_city()
+ob = PopulatePlaces('New York')
+ob.add_city()
 
 
 class TripPlanner():
