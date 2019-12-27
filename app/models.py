@@ -1,4 +1,4 @@
-from app import db,login
+from app import db, login
 from app.APICalls import APICalls
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -8,6 +8,10 @@ from flask_login import UserMixin
 @login.user_loader
 def load_user(iduser):
     return users.query.get(int(iduser))
+
+def in_places_served(idplace):
+    return db.session.query(place).filter_by(idplace = idplace).scalar() is not None
+
 
 class place(db.Model):
     idplace = db.Column(db.String(100),
@@ -20,10 +24,8 @@ class place(db.Model):
     # thus all the other information need not be stored
     name = db.Column(db.String(200),
                       nullable = False)
-    latitude = db.Column(db.Float(9),
-                         nullable = False)
-    longitude = db.Column(db.Float(9),
-                          nullable = False)
+    latitude = db.Column(db.Float(9))
+    longitude = db.Column(db.Float(9))
     city = db.Column(db.String(50),
                      nullable = False)
     openingHours = db.Column(db.JSON)
@@ -33,8 +35,7 @@ class place(db.Model):
     history = db.Column(db.String(400))
     descriptionShort = db.Column(db.String(200))
     descriptionLong = db.Column(db.String(1000))
-    address = db.Column(db.String(1000),
-                        nullable = False)
+    address = db.Column(db.String(1000))
     phoneNum = db.Column(db.String(20))
     website = db.Column(db.String(2000))
     tags = db.relationship('placeDescriptionTag',
@@ -43,11 +44,7 @@ class place(db.Model):
     itineraryItem = db.relationship('itineraryItem',
                                      backref = 'place')
     reviews = db.relationship('experienceReview',
-                              backref = 'place')  
-
-    def in_places_served(self, 
-                  idplace):
-        return db.session.query(place).filter_by(idplace = idplace).scalar() is not None
+                              backref = 'place')     
 
     def add_to_db(self, idplace):
         exists = self.in_places(idplace)
@@ -66,13 +63,13 @@ class place(db.Model):
                     'openingHours' : self.openingHours,
                     'photo' : self.photo,
                     'stayTime' : self.stayTime,
-                    'numUsersVisited' : self.numUSersVisited,
+                    'numUsersVisited' : self.numUsersVisited,
                     'history' : self.history,
                     'descriptionShort' : self.descriptionShort, 
                     'address' : self.address,
                     'phoneNum' : self.phoneNum,
                     'website' : self.website,
-                    'tags' : self.tags,
+                    'tags' : [tag.serialize() for tag in self.tags],
                     'itineraryItem' : self.itineraryItem,
                     'reviews' : self.reviews}
 
@@ -94,14 +91,13 @@ class user(UserMixin, db.Model):
                       #primary_key = True,
                       nullable = False)
     numTripsTaken = db.Column(db.String(10),
-                              default = 0,
-                              nullable = False)
+                              default = 0)
     password = db.Column(db.String(100))
     session = db.relationship('session',
                                backref = 'user')
     itinerary = db.relationship('itinerary',
                                 backref = 'user')
-    trips = db.relationship('trips',
+    trips = db.relationship('trip',
                             backref = 'user')
     reviews = db.relationship('experienceReview',
                               backref = 'reviewsUser')
@@ -140,6 +136,13 @@ class placeDescriptionTag(db.Model):
 
     def __repr__(self):
         return '<Place Tag {}>'.format(self.tag)
+
+    def serialize(self):
+        return {
+                'idplaceDescription' : self.idplaceDescription,
+                'idplace' : self.idplace,
+                'tag' : self.tag
+                }
 
 
 class session(db.Model):
@@ -217,8 +220,8 @@ class itineraryItem(db.Model):
         return 'Item {}'.format(self.iditineraryItem)
 
 
-class trips(db.Model):
-    idtrips = db.Column(db.Integer,
+class trip(db.Model):
+    idtrip = db.Column(db.Integer,
                         primary_key = True,
                         nullable = False)
     iduser = db.Column(db.Integer,
@@ -245,7 +248,7 @@ class experienceReview(db.Model):
     idplace = db.Column(db.String(100),
                         db.ForeignKey('place.idplace'))
     idtrip = db.Column(db.Integer,
-                       db.ForeignKey('trip.idtrips'))
+                       db.ForeignKey('trip.idtrip'))
     tripRating = db.Column(db.Integer,
                            nullable = False)
     review = db.Column(db.String(200))

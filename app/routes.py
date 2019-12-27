@@ -1,13 +1,16 @@
 from app import app, db
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import user, place, itineraryItem
-from flask import redirect, url_for, flash, jsonify, request, session, Flask
+from flask import redirect, url_for, flash, jsonify, request, session, Flask, make_response
 from app.forms import LoginForm, RegistrationForm
 from werkzeug.datastructures import MultiDict
 import random
 import json
 from app.APICalls import APICalls
-
+import time
+import requests
+import ast
+import pandas as pd
 
 places = 100
 quantity = 20
@@ -20,24 +23,36 @@ def index():
 @app.route("/load/", methods = ['GET'])
 def load():
     """ Route to return the places """
-
+    #print(request.values)
     time.sleep(0.2)  # Used to simulate delay
-    session = Session()
+    #session = Session()
 
     if request.args:
         counter = int(request.args.get("page"))  # The 'counter' value sent in the QS
         # The request in the front-end must send all the three parameters required here - 
         # page. city and filters
         # filters is a list of tags the user wants to see
-        filters = str.split(requests.args.get('filters')) # list of all the filters to be applied for search
+        #print(counter)
+        filters = ast.literal_eval(request.args.get('filters')) # list of all the filters to be applied for search
+        #filters = ast.literal_eval(filters)
+        #print(filters)
         if counter:
-            quantity = int(requests.args.city.get('per_page'))
-            p = session.query(place).filter(city = filters['city']).paginate(page = counter, per_page = quantity, error_out = True)
+            quantity = int(request.args.get('per_page'))
+            #print(quantity)
+            p = db.session.query(place).filter(place.city == filters['city']).paginate(page = counter, per_page = quantity, error_out = True)
+            #print(p)
             print(f"Returning posts {counter} to {counter+quantity}")
-            #p = pd.Series(p)
+            p = pd.Series(p.items)
+            #print(p)
             # Slice 0 -> quantity from the db
             #res = make_response(logged_apply(p, jsonify), 200)
-            res = make_response(logged_apply(pd.Series(list(p)), serialize_ ).to_json(), 200)
+            #print('Serialized places:')
+            res_ = logged_apply(pd.Series(list(p)), serialize_ )
+            #print(res_)
+            #print('jsonified places:')
+            res_ = logged_apply(res_, jsonify)
+            #print(res_)
+            res = make_response(res_.to_json(), 200)
         elif counter == places:
             print("No more posts")
             res = make_response(jsonify({}), 200)
@@ -78,6 +93,14 @@ def serialize_(ob):
         This function serializes each place object for sending to frontend
     """
     return ob.serialize()
+
+def jsonify(dt):
+    """
+        Converts the dictionary into a 
+    """
+    print(dt)
+    jsn = json.dumps(dt)
+    return jsn
 
 
 
