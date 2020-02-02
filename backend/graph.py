@@ -1,10 +1,17 @@
 import numpy as np
 
 class Node:
+
+    """
+        This is the base class for a inheriting properties of a node.
+        This is compatible with any graph data structure
+    """
   
-    def __init__(self, data, indexloc = None):
-        self.data = data
+    def __init__(self, key, indexloc = None, left = None, right = None):
+        self.key = key
         self.index = indexloc
+        self.left = left,
+        self.right = right
         
        
 class Graph(dict):
@@ -14,10 +21,13 @@ class Graph(dict):
         return Graph(len(nodes), len(nodes), nodes)
 
   
-    def __init__(self, row, col, nodes = None, connection = 'from'):
+    def __init__(self, row, col, nodes = None, connection = 'from', complete = False):
         # set up an adjacency matrix
         self.connection = connection
-        self.adj_mat = np.zeros((row, col))
+        if not complete:
+            self.adj_mat = np.zeros((row, col))
+        else:
+            self.adj_mat = np.ones((row, col))
         self.nodes = nodes
         for i in range(len(self.nodes)):
             self.nodes[i].index = i
@@ -198,4 +208,4 @@ class Graph(dict):
         elif self.connection == 'from':
             return self.connections_from(vertex)
 
-
+   
