@@ -1,6 +1,6 @@
 import numpy as np
 from edmonds import mst
-from graph import Graph
+from graph import Graph, Node
 
 class Utils(object):
     def __init__(self, G):
@@ -9,8 +9,8 @@ class Utils(object):
         """
         self.G = G
 
-    def _computeMST(self):
-        return self._constructGraph(mst(self.G))
+    def computeMST(self, s):
+        return self._constructGraph(mst(self.G, s))
 
     def _constructGraph(self, g):
         """
@@ -25,8 +25,43 @@ class Utils(object):
                 G.connect_dir(node, ele)
         return G
 
-    def _getPreOrderTraversal(root):
-            if root:
-                 _getPreOrderTraversal
+    def _getPreOrderTraversal(self, root):
+        if root:
+            yield root.key
+            self._getPreOrderTraversal(self._getNodeFromGraph(root.left))
+            self._getPreOrderTraversal(self._getNodeFromGraph(root.right))
+
+    def _getPostOrderTraversal(self, root):
+        if root:
+            self._getPostOrderTraversal(self._getNodeFromGraph(root.left))
+            self._getPostOrderTraversal(self._getNodeFromGraph(root.right))
+            yield root.key
+
+    def _getInOrderTraversal(self, root):
+        if root:
+            self._getInOrderTraversal(self._getNodeFromGraph(root.left))
+            yield root.key
+            self._getInOrderTraversal(self._getNodeFromGraph(root.right))
+            
+    def PreOrderTraversal(self, G, node):
+        return np.ndarray([n for n in self._getPreOrderTraversal(self._getNodeFromGraph( node))])
+
+    def _getNodeFromGraph(self, node):
+        return self.G.getNode(node)
+        
+        
+    
+    
+def TSPApproxMST(object):
+    def __init__(self, G, s):
+        self.G = G
+        self.s = s
+        self.utils_g = Utils(self.G)
+
+    def getPath(self):
+        self.mst = self.utils_g.computeMST(self.s)
+        self.preOrderTraversal = self.util_g.PreOrderTraversal(self.mst, self.s)
+        return self.preOrderTraversal
+        # Add path to graph utility function to return a graph here 
 
 

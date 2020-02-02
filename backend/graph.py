@@ -1,6 +1,6 @@
 import numpy as np
 
-class Node:
+class BinaryTreeNode:
 
     """
         This is the base class for a inheriting properties of a node.
@@ -10,7 +10,7 @@ class Node:
     def __init__(self, key, indexloc = None, left = None, right = None):
         self.key = key
         self.index = indexloc
-        self.left = left,
+        self.left = left
         self.right = right
         
        
@@ -21,9 +21,17 @@ class Graph(dict):
         return Graph(len(nodes), len(nodes), nodes)
 
   
-    def __init__(self, row, col, nodes = None, connection = 'from', complete = False):
+    def __init__(self, 
+                 row,
+                 col,
+                 nodes = None,
+                 connection = 'from', 
+                 complete = False, 
+                 binary = False):
         # set up an adjacency matrix
         self.connection = connection
+        self.complete = complete
+        self.binary = binary
         if not complete:
             self.adj_mat = np.zeros((row, col))
         else:
@@ -31,6 +39,22 @@ class Graph(dict):
         self.nodes = nodes
         for i in range(len(self.nodes)):
             self.nodes[i].index = i
+
+    def getNode(self, index):
+        node = BinaryTreeNode(key = index)
+        if connection = 'from':
+            connections = self.connections_from(index)
+        elif connection = 'to':
+            connections = self.connections_to(index)
+        if connections[0]<connections[1]:
+            left = connections[0]
+            right = connections[1]
+        else
+            left = connections[1]
+            right = connections[0]
+        node.left = left
+        node.right = right
+        return node
 
     """
         Connects from node1 to node2
@@ -76,7 +100,7 @@ class Graph(dict):
           print(row)
   
     def node(self, index):
-      return self.nodes[index]
+      return 
   
     def remove_conn(self, node1, node2):
       self.remove_conn_dir(node1, node2)
