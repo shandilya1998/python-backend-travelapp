@@ -47,10 +47,8 @@ class Utils(object):
         return np.ndarray([n for n in self._getPreOrderTraversal(self._getNodeFromGraph( node))])
 
     def _getNodeFromGraph(self, node):
-        return self.G.getNode(node)
-        
-        
-    
+        return self.G.getBinaryTreeNode(node)
+         
     
 def TSPApproxMST(object):
     def __init__(self, G, s):
@@ -58,10 +56,13 @@ def TSPApproxMST(object):
         self.s = s
         self.utils_g = Utils(self.G)
 
-    def getPath(self):
+    def getMSTPath(self):
         self.mst = self.utils_g.computeMST(self.s)
         self.preOrderTraversal = self.util_g.PreOrderTraversal(self.mst, self.s)
         return self.preOrderTraversal
         # Add path to graph utility function to return a graph here 
 
+    def getTSPApproxMSTSoluction(self):
+        path = self.getMSTPath()
+        return self.G.getSolutionHamCycl(path)
 

@@ -40,7 +40,7 @@ class Graph(dict):
         for i in range(len(self.nodes)):
             self.nodes[i].index = i
 
-    def getNode(self, index):
+    def getBinaryTreeNode(self, index):
         node = BinaryTreeNode(key = index)
         if connection = 'from':
             connections = self.connections_from(index)
@@ -225,6 +225,10 @@ class Graph(dict):
         for vertex in path:
             print (vertex, end = " ")
         print (path[0], "\n")
+
+    def getSolutionHamCycl(self, path):
+        for vertex in path:
+            yield vertex
     
     def __getattr__(self, vertex):
         if self.connection == 'to':

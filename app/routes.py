@@ -22,7 +22,10 @@ def index():
 
 @app.route("/load/", methods = ['GET'])
 def load():
-    """ Route to return the places """
+    """ 
+        Route to return the places
+        Tested for url : http://127.0.0.1:5000/load/?page=7&per_page=10&filters={%27city%27%3A%27New%20York%27}
+    """
     #print(request.values)
     time.sleep(0.2)  # Used to simulate delay
     #session = Session()
@@ -59,6 +62,12 @@ def load():
         else: 
             raise ValueError('Please enter valid page number : \'None\' type value found, when expecting an \'int\'')
     return res
+
+@app.route('/getPlace/', methods = ['GET'])
+def getPlace():
+    idplace = reques.args.get('idplace')
+    place = db.session.query.filter(idplace = idplace).first()
+    return place.serialize()
 
 def logged_apply(g, func, *args, **kwargs):
     """
