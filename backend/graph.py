@@ -8,7 +8,7 @@ class Node:
 
     def __init__(self, key, children = None, edgeWeights = None, nodeWeight = None):
         self.key = key
-        self.children = None
+        self.children = children
         self.edgeWeights = edgeWeights
         self.nodeWeight = nodeWeight
 
@@ -51,21 +51,33 @@ class Graph(dict):
         self.nodes = nodes
         for i in range(len(self.nodes)):
             self.nodes[i].index = i
+        super(Graph, self).__init__()
 
     def getBinaryTreeNode(self, index):
-        node = BinaryTreeNode(key = index)
-        if connection = 'from':
-            connections = self.connections_from(index)
-        elif connection = 'to':
-            connections = self.connections_to(index)
-        if connections[0]<connections[1]:
-            left = connections[0]
-            right = connections[1]
-        else
-            left = connections[1]
-            right = connections[0]
-        node.left = left
-        node.right = right
+        if self.binary:
+            node = BinaryTreeNode(key = index)
+            if self.connection= = 'from':
+                connections = self.connections_from(index)
+            elif self.connection == 'to':
+                connections = self.connections_to(index)
+            if connections[0]<connections[1]:
+                left = connections[0]
+                right = connections[1]
+            else
+                left = connections[1]
+                right = connections[0]
+            node.left = left
+            node.right = right
+            return node
+        else:
+            raise TypeError('The graph is not a binary tree')
+
+    def getNode(self, index):
+        if self.connection == 'from':
+            children = self.connections_from(index)
+        elif self.connection == 'to':
+            children = self.connection_to(index)
+        node = Node(index, children = children)
         return node
 
     """
@@ -110,9 +122,7 @@ class Graph(dict):
     def print_adj_mat(self):
       for row in self.adj_mat:
           print(row)
-  
-    def node(self, index):
-      return 
+   
   
     def remove_conn(self, node1, node2):
       self.remove_conn_dir(node1, node2)
