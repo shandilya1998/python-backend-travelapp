@@ -1,5 +1,17 @@
 import numpy as np
 
+class Node:
+    """
+        This is the base class for a generic node of a graph
+        This is compatible with any graph data structure
+    """
+
+    def __init__(self, key, children = None, edgeWeights = None, nodeWeight = None):
+        self.key = key
+        self.children = None
+        self.edgeWeights = edgeWeights
+        self.nodeWeight = nodeWeight
+
 class BinaryTreeNode:
 
     """

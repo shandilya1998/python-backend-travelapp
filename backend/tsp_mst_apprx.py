@@ -50,7 +50,7 @@ class Utils(object):
         return self.G.getBinaryTreeNode(node)
          
     
-def TSPApproxMST(object):
+class TSPApproxMST(object):
     def __init__(self, G, s):
         self.G = G
         self.s = s
