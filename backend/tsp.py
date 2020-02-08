@@ -76,7 +76,7 @@ class TSPApproxNN(object):
         self.G = G
         self.s = s
         self.source = self.G.getNode(self.s)
-        self.nodes = self.nodes
+        self.nodes = self.G.nodes
         self.num_nodes = self.nodes.shape[0]
 
     def getTSPApproxNN(self):
@@ -89,6 +89,23 @@ class TSPApproxNN(object):
             elif start == self.source:
                 nn = self.source
             visited.append(nn)
+            start = nn
         path = np.ndarray(visited)            
         return path
+
+
+class TSPApproxInsertion(object):
+    def __init__(self, G, s):
+        """
+            G : <class.Graph>
+            s : key of source path
+        """
+        self.G = G
+        self.s = s
+        self.source = self.G.getNodes(self.s)
+        self.nodes = self.G.nodes
+        self.num_nodes = self.nodes.shape[0]
+
+    def getTSPApproxInsertion(self):
+        return ''
 
