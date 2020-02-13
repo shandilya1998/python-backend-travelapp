@@ -6,8 +6,8 @@ class Node:
         This is compatible with any graph data structure
     """
 
-    def __init__(self, key, children = None, edgeWeights = None, nodeWeight = None):
-        self.key = key
+    def __init__(self, index, children = None, edgeWeights = None, nodeWeight = None):
+        self.index = index
         self.children = children
         self.edgeWeights = edgeWeights
         self.nodeWeight = nodeWeight
@@ -35,12 +35,27 @@ class Graph(dict):
   
     def __init__(self, 
                  row,
-                 col,
+                 col = None,
                  nodes = None,
+                 weights = None,
                  connection = 'from', 
                  complete = False, 
                  binary = False):
-        # set up an adjacency matrix
+        """
+            The class sets-up aan adjacency matrix 
+            row : number of nodes in the graph from wich connections originate; Required; int
+            col : number of nodes in the graph to which connections go; Optional; int, default : row
+            nodes : array containing the indices of all the nodes; Optional; np.array or np.ndarray; 
+                    default : np.ndarray([0, 1, 2, 3, 4,..., row])
+            weights : array containing the weights corresponding to each node; np.ndarray; Optional;
+                      default : mp.ndarray([1])
+            connection : set type of connection - 'to' or 'from'; Optional, defualt : 'from'
+            complete : Boolean, if the graph is complete or not
+            binary : Boolean, if the graph is binary or not
+
+        """
+        if not col:
+            col = row
         self.connection = connection
         self.complete = complete
         self.binary = binary
@@ -48,22 +63,25 @@ class Graph(dict):
             self.adj_mat = np.zeros((row, col))
         else:
             self.adj_mat = np.ones((row, col))
+        if not nodes:
+            nodes = np.arange(row)
         self.nodes = nodes
-        for i in range(len(self.nodes)):
-            self.nodes[i].index = i
+        if not weights:
+            weights = np.ones(row)
+        self.weights = weights
         super(Graph, self).__init__()
 
     def getBinaryTreeNode(self, index):
         if self.binary:
             node = BinaryTreeNode(key = index)
-            if self.connection= = 'from':
+            if self.connection == 'from':
                 connections = self.connections_from(index)
             elif self.connection == 'to':
                 connections = self.connections_to(index)
             if connections[0]<connections[1]:
                 left = connections[0]
                 right = connections[1]
-            else
+            else:
                 left = connections[1]
                 right = connections[0]
             node.left = left
@@ -102,6 +120,10 @@ class Graph(dict):
         Return value: array of tuples (node, weight)
     """
     def connections_from(self, node):
+        """
+            returns all connections from a node with their respective weights
+            List of tuples
+        """
         node = self.get_index_from_node(node)
         return [(self.nodes[col_num], self.adj_mat[node][col_num]) for col_num in range(len(self.adj_mat[node])) if self.adj_mat[node][col_num] != 0]
 
@@ -113,44 +135,45 @@ class Graph(dict):
         connections_from
         Return value: array of tuples (node, weight)
     """
+
     def connections_to(self, node):
-      node = self.get_index_from_node(node)
-      column = [row[node] for row in self.adj_mat]
-      return [(self.nodes[row_num], column[row_num]) for row_num in range(len(column)) if column[row_num] != 0]
+        node = self.get_index_from_node(node)
+        column = [row[node] for row in self.adj_mat]
+        return [(self.nodes[row_num], column[row_num]) for row_num in range(len(column)) if column[row_num] != 0]
      
   
     def print_adj_mat(self):
-      for row in self.adj_mat:
-          print(row)
+        for row in self.adj_mat:
+             print(row)
    
   
     def remove_conn(self, node1, node2):
-      self.remove_conn_dir(node1, node2)
-      self.remove_conn_dir(node2, node1)
+        self.remove_conn_dir(node1, node2)
+        self.remove_conn_dir(node2, node1)
    
     """
         Remove connection in a directed manner (nod1 to node2)
         Can accept index number OR node object
     """
     def remove_conn_dir(self, node1, node2):
-      node1, node2 = self.get_index_from_node(node1), self.get_index_from_node(node2)
-      self.adj_mat[node1][node2] = 0   
+        node1, node2 = self.get_index_from_node(node1), self.get_index_from_node(node2)
+        self.adj_mat[node1][node2] = 0   
   
     """
         Can go from node 1 to node 2?
     """
     def can_traverse_dir(self, node1, node2):
-      node1, node2 = self.get_index_from_node(node1), self.get_index_from_node(node2)
-      return self.adj_mat[node1][node2] != 0  
+        node1, node2 = self.get_index_from_node(node1), self.get_index_from_node(node2)
+        return self.adj_mat[node1][node2] != 0  
   
     def has_conn(self, node1, node2):
-      return self.can_traverse_dir(node1, node2) or self.can_traverse_dir(node2, node1)
+        return self.can_traverse_dir(node1, node2) or self.can_traverse_dir(node2, node1)
   
     def add_node(self, node):
-      self.nodes = np.append(self.nodes, [node])
-      node.index = len(self.nodes) - 1
-      self.adj_mat = np.append(self.a)     
-      self.adj_mat.append([0] * (len(self.adj_mat) + 1))
+        self.nodes = np.append(self.nodes, [node])
+        node.index = len(self.nodes) - 1
+        self.adj_mat = np.append(self.a)     
+        self.adj_mat.append([0] * (len(self.adj_mat) + 1))
 
     """
         Get the weight associated with travelling from n1
@@ -197,7 +220,7 @@ class Graph(dict):
 
         # base case: if all vertices are
         # included in the path
-        if pos == self.nodes.shape[0]:
+        if index == self.nodes.shape[0]:
             # Last vertex must be adjacent to the
             # first vertex in path to make a cyle
             if self.adj_mat[ path[index-1] ][ path[0] ] == 1:
@@ -208,7 +231,7 @@ class Graph(dict):
         # Try different vertices as a next candidate
         # in Hamiltonian Cycle. We don't try for 0 as
         # we included 0 as starting point in hamCycle()
-        for v in range(1,self.nodes.shapes[0]):
+        for v in range(1, self.nodes.shape[0]):
 
             if self.isSafe(v, index, path) == True:
 
@@ -238,7 +261,7 @@ class Graph(dict):
             print ("Solution does not exist\n")
             return False
 
-        self.printSolution(path)
+        self.printSolutionHamCycl(path)
         return True
 
     def printSolutionHamCycl(self, path):
@@ -258,4 +281,5 @@ class Graph(dict):
         elif self.connection == 'from':
             return self.connections_from(vertex)
 
-   
+g = Graph(10)  
+

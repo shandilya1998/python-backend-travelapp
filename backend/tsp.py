@@ -107,5 +107,10 @@ class TSPApproxInsertion(object):
         self.num_nodes = self.nodes.shape[0]
 
     def getTSPApproxInsertion(self):
+        visited = [get_nearest_neighbour(self.source)]
+        nodes = list(self.nodes)
+        while(len(visited)<=self.num_nodes):
+            
+
         return ''
 
