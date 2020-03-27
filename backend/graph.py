@@ -1,17 +1,28 @@
 import numpy as np
+from min_heap import create_minheap_from_array
 
 class Node:
     """
         This is the base class for a generic node of a graph
         This is compatible with any graph data structure
+        Input : 
+        -   index (int)
+        -   children (np.ndarray, dtype = np.int32)
+        -   edgeWeights (np.ndarray, dtype = np.float32)
+        -   nodeWeights (np.ndarray, dtype = np.float32)
     """
 
-    def __init__(self, index, children = None, edgeWeights = None, nodeWeight = None):
+    def __init__(self,
+                 index,
+                 children = None,
+                 edgeWeights = None,
+                 nodeWeight = None):
         self.index = index
         self.children = children
+        self.nodeWeights = nodeWeights
         self.edgeWeights = edgeWeights
-        self.nodeWeight = nodeWeight
 
+ 
 class BinaryTreeNode:
 
     """
@@ -95,8 +106,8 @@ class Graph(dict):
             children = self.connections_from(index)
         elif self.connection == 'to':
             children = self.connection_to(index)
-        node = Node(index, children = children)
-        return node
+        weights = np.array([self.weights[i] for c in children])
+        return Node(index, children = children, nodeWeights = weights)
 
     """
         Connects from node1 to node2
@@ -268,7 +279,7 @@ class Graph(dict):
         print ("Solution Exists: Following",
                  "is one Hamiltonian Cycle")
         for vertex in path:
-            print (vertex, end = " ")
+            print (vertex)
         print (path[0], "\n")
 
     def getSolutionHamCycl(self, path):
@@ -279,7 +290,5 @@ class Graph(dict):
         if self.connection == 'to':
             return self.connections_to(vertex)
         elif self.connection == 'from':
-            return self.connections_from(vertex)
-
-g = Graph(10)  
+            return self.connections_from(vertex)  
 

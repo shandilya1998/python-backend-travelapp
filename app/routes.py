@@ -20,7 +20,7 @@ quantity = 20
 def index():
     return 'This is Sherpa, your travel guide'
 
-@app.route("/load/", methods = ['GET'])
+@app.route("/load", methods = ['GET'])
 def load():
     """ 
         Route to return the places
@@ -29,20 +29,20 @@ def load():
     #print(request.values)
     time.sleep(0.2)  # Used to simulate delay
     #session = Session()
-
+    res = {}
     if request.args:
         counter = int(request.args.get("page"))  # The 'counter' value sent in the QS
         # The request in the front-end must send all the three parameters required here - 
         # page. city and filters
         # filters is a list of tags the user wants to see
         #print(counter)
-        filters = ast.literal_eval(request.args.get('filters')) # list of all the filters to be applied for search
         #filters = ast.literal_eval(filters)
         #print(filters)
+        city = str(request.args.get('city'))
         if counter:
             quantity = int(request.args.get('per_page'))
             #print(quantity)
-            p = db.session.query(place).filter(place.city == filters['city']).paginate(page = counter, per_page = quantity, error_out = True)
+            p = db.session.query(place).filter(place.city == city ).paginate(page = counter, per_page = quantity, error_out = True)
             #print(p)
             print(f"Returning posts {counter} to {counter+quantity}")
             p = pd.Series(p.items)

@@ -1,5 +1,4 @@
 import sys
-
 # --------------------------------------------------------------------------------- #
 
 def _input(filename):
@@ -187,4 +186,4 @@ if __name__ == "__main__":
     h = mst(int(root),g)
     for s in h:
         for t in h[s]:
-            print "%d-%d" % (s,t)
+            print ("%d-%d" % (s,t))

@@ -4,6 +4,10 @@ NumPy based implemenation of min-heap data structure.
 
 import numpy as np
 
+def create_minheap_from_array(array):
+        heap = MinHeap(len(array))
+        np.vectorize(heap.insert)(array)
+        return heap
 
 class MinHeap(object):
 
@@ -24,8 +28,12 @@ class MinHeap(object):
         return self.heap[parent_idx]
 
     def insert(self, key):
-        print('Inserting key ' + str(key))
-        if type(key) == list or type(key) == np.ndarray:
+        """
+            Insets an element in the heap
+            Inputs:
+            -   key (int or np.ndarray)
+        """
+        if isinstance(key, np.ndarray):
             for i in range(len(key) - 1):
                 self.insert(key[i])
             key = key[-1]
