@@ -136,7 +136,7 @@ class Graph(dict):
             List of tuples
         """
         node = self.get_index_from_node(node)
-        return [(self.nodes[col_num], self.adj_mat[node][col_num]) for col_num in range(len(self.adj_mat[node])) if self.adj_mat[node][col_num] != 0]
+        return np.array([(self.nodes[col_num], self.adj_mat[node][col_num]) for col_num in range(len(self.adj_mat[node])) if self.adj_mat[node][col_num] != 0])
 
     """
         Map matrix to column of node
@@ -292,3 +292,12 @@ class Graph(dict):
         elif self.connection == 'from':
             return self.connections_from(vertex)  
 
+    def BFTraversal(self, start, condition = minimum):
+        visited = np.zeros((self.row,))
+        path = 
+
+def minimum(array1D):
+    """
+        Takes a 1D numpy array as input and returns the minimum
+    """
+    return array1D.min()
