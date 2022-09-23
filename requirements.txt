@@ -38,7 +38,7 @@ oauthlib==3.1.0
 opt-einsum==3.1.0
 ortools==7.3.7083
 pandas==0.25.3
-protobuf==3.9.1
+protobuf==3.18.3
 psycopg2==2.8.4
 psycopg2-binary==2.8.4
 pyasn1==0.4.8
